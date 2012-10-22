@@ -33,7 +33,7 @@ public class Main {
     static {
         // Avoid IE8 warnings from closure.
         // Comment out ECMASCRIPT5 for lots of errors.
-        // options.setLanguageIn(CompilerOptions.LanguageMode.ECMASCRIPT5);
+         options.setLanguageIn(CompilerOptions.LanguageMode.ECMASCRIPT5);
         // options.setWarningLevel(DiagnosticGroups.NON_STANDARD_JSDOC,
         // CheckLevel.OFF);
         // options.setWarningLevel(DiagnosticGroups.FILEOVERVIEW_JSDOC,
@@ -80,7 +80,7 @@ public class Main {
 
     static class JavaScriptVisitor extends SimpleFileVisitor<Path> {
         private static final String outputPathStr = outputPath.toString();
-        private static final Path outputPathParent = outputPath.getParent();
+        private static final Path inputPathParent = inputPath.getParent();
 
         @Override
         public FileVisitResult visitFile(final Path file,
@@ -90,9 +90,10 @@ public class Main {
             if (in.toLowerCase().endsWith(".js")) {
                 // Join outputPathStr with relativized file.
                 final Path out = Paths.get(outputPathStr,
-                        outputPathParent.relativize(file).toString())
+                        inputPathParent.relativize(file).toString())
                         .normalize();
 
+                System.out.println(out);
                 min(in, out);
             }
 
@@ -114,17 +115,17 @@ public class Main {
      * @param args
      */
     public static void main(String[] args) {
-        args = new String[2];
-        args[0] = "src";
-        args[1] = "min/src";
-
-        inputPath = Paths.get(args[0]);
-        outputPath = Paths.get(args[1]);
+//        args = new String[2];
+//        args[0] = "ace/lib/ace";
+//        args[1] = "gollum/lib/gollum/frontend/public/gollum/livepreview/js/ace/lib";
 
         if (args.length != 2) {
             System.out.println("sourceFolder destFolder");
             exit();
         }
+
+        inputPath = Paths.get(args[0]);
+        outputPath = Paths.get(args[1]);
 
         try {
             Files.walkFileTree(inputPath, new Main.JavaScriptVisitor());
